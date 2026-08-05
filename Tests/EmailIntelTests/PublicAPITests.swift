@@ -138,6 +138,8 @@ import Foundation
 
 // MARK: - Version
 
-@Test func versionBumpedTo020() {
-    #expect(EmailIntel.version == "0.2.0")
+@Test func versionIsSemver() {
+    let parts = EmailIntel.version.split(separator: ".")
+    #expect(parts.count == 3)
+    #expect(parts.allSatisfy { Int($0) != nil })
 }

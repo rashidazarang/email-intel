@@ -22,9 +22,14 @@ The package uses Swift 6 strict concurrency and has **zero external dependencies
 ## Quick start (CLI)
 
 ```bash
+npx -y -p email-intel-mcp email-intel-cli stripe.com
+```
+
+Or build from source:
+
+```bash
 git clone https://github.com/rashidazarang/email-intel.git
 cd email-intel && swift build -c release
-
 .build/release/email-intel-cli stripe.com
 ```
 
@@ -51,17 +56,26 @@ Analyze raw headers offline:
 
 ## MCP server
 
-Point any MCP client at the binary. There is no key and no configuration beyond the path:
+Add the server to any MCP client with one config block. npm delivers the bundled macOS binaries. There is no key and no build step:
 
 ```json
 {
   "mcpServers": {
     "email-intel": {
-      "command": "/path/to/email-intel/.build/release/EmailIntelMCP"
+      "command": "npx",
+      "args": ["-y", "email-intel-mcp"]
     }
   }
 }
 ```
+
+For Claude Code:
+
+```bash
+claude mcp add email-intel -- npx -y email-intel-mcp
+```
+
+If you build from source, point the client at the binary instead: `.build/release/EmailIntelMCP`.
 
 | Tool | Input | Output |
 |---|---|---|

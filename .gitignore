@@ -3,3 +3,7 @@
 DerivedData/
 *.xcodeproj
 .DS_Store
+npm/vendor/
+npm/README.md
+*.tgz
+node_modules/

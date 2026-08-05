@@ -18,6 +18,12 @@ if [ "$constant" != "$changelog" ]; then
   exit 1
 fi
 
+npm_version=$(grep -m1 '"version"' npm/package.json | grep -o '[0-9.]*')
+if [ "$constant" != "$npm_version" ]; then
+  echo "check-versions: EmailIntel.version is $constant but npm/package.json says $npm_version." >&2
+  exit 1
+fi
+
 latest_tag=$(git tag --list 'v*' --sort=-v:refname | head -1)
 if [ -n "$latest_tag" ]; then
   tag_version=${latest_tag#v}

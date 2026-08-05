@@ -2,6 +2,14 @@
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). The project uses [Semantic Versioning](https://semver.org/).
 
+## [0.3.0] - 2026-08-05
+
+### Added
+
+- npm distribution: `email-intel-mcp`. The package bundles universal macOS binaries (arm64 and x86_64) for the MCP server and the CLI. `npx -y email-intel-mcp` starts the server. No build step and no download at install time.
+- `scripts/build-npm.sh` assembles the package and smoke-tests both launchers.
+- The version gate now also checks `npm/package.json`.
+
 ## [0.2.0] - 2026-08-05
 
 First public release, extracted from a private package.
@@ -22,4 +30,5 @@ First public release, extracted from a private package.
 
 - The license gate from the private distribution. Every tool runs without a key.
 
+[0.3.0]: https://github.com/rashidazarang/email-intel/releases/tag/v0.3.0
 [0.2.0]: https://github.com/rashidazarang/email-intel/releases/tag/v0.2.0

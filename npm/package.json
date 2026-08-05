@@ -1,0 +1,46 @@
+{
+  "name": "email-intel-mcp",
+  "version": "0.3.0",
+  "description": "Email infrastructure fingerprinting as an MCP server and a CLI. Provider detection, SPF/DKIM/DMARC posture graded A+ to F, header analysis. macOS, zero dependencies.",
+  "license": "Apache-2.0",
+  "author": "Rashid Azarang",
+  "homepage": "https://github.com/rashidazarang/email-intel#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rashidazarang/email-intel.git"
+  },
+  "bugs": {
+    "url": "https://github.com/rashidazarang/email-intel/issues"
+  },
+  "bin": {
+    "email-intel-mcp": "bin/email-intel-mcp.js",
+    "email-intel-cli": "bin/email-intel-cli.js"
+  },
+  "files": [
+    "bin/",
+    "vendor/",
+    "README.md"
+  ],
+  "os": [
+    "darwin"
+  ],
+  "cpu": [
+    "arm64",
+    "x64"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "email",
+    "deliverability",
+    "spf",
+    "dkim",
+    "dmarc",
+    "dns",
+    "smtp",
+    "swift"
+  ]
+}
