@@ -1,0 +1,313 @@
+{
+  "version": "1.0.0",
+  "description": "Email service fingerprint database — maps DNS signals to known services",
+  "services": [
+    {
+      "id": "google-workspace",
+      "name": "Google Workspace",
+      "category": "mailboxProvider",
+      "signals": {
+        "spfIncludes": ["_spf.google.com"],
+        "dkimSelectors": ["google"],
+        "mxPatterns": ["google.com", "googlemail.com"]
+      }
+    },
+    {
+      "id": "microsoft-365",
+      "name": "Microsoft 365",
+      "category": "mailboxProvider",
+      "signals": {
+        "spfIncludes": ["spf.protection.outlook.com"],
+        "dkimSelectors": ["selector1", "selector2"],
+        "mxPatterns": ["mail.protection.outlook.com"]
+      }
+    },
+    {
+      "id": "protonmail",
+      "name": "Proton Mail",
+      "category": "mailboxProvider",
+      "signals": {
+        "mxPatterns": ["protonmail.ch"],
+        "dkimSelectors": ["protonmail"]
+      }
+    },
+    {
+      "id": "fastmail",
+      "name": "Fastmail",
+      "category": "mailboxProvider",
+      "signals": {
+        "spfIncludes": ["spf.messagingengine.com"],
+        "mxPatterns": ["messagingengine.com"]
+      }
+    },
+    {
+      "id": "zoho",
+      "name": "Zoho Mail",
+      "category": "mailboxProvider",
+      "signals": {
+        "spfIncludes": ["zoho.com"],
+        "mxPatterns": ["zoho.com"]
+      }
+    },
+    {
+      "id": "yahoo",
+      "name": "Yahoo Mail",
+      "category": "mailboxProvider",
+      "signals": {
+        "mxPatterns": ["yahoodns.net"]
+      }
+    },
+    {
+      "id": "icloud",
+      "name": "iCloud Mail",
+      "category": "mailboxProvider",
+      "signals": {
+        "spfIncludes": ["icloud.com"],
+        "mxPatterns": ["icloud.com"]
+      }
+    },
+    {
+      "id": "migadu",
+      "name": "Migadu",
+      "category": "mailboxProvider",
+      "signals": {
+        "spfIncludes": ["spf.migadu.com"],
+        "mxPatterns": ["migadu.com"]
+      }
+    },
+    {
+      "id": "sendgrid",
+      "name": "SendGrid",
+      "category": "transactional",
+      "signals": {
+        "spfIncludes": ["sendgrid.net"],
+        "dkimSelectors": ["s1", "s2", "smtpapi"]
+      }
+    },
+    {
+      "id": "postmark",
+      "name": "Postmark",
+      "category": "transactional",
+      "signals": {
+        "spfIncludes": ["spf.mtasv.net"],
+        "dkimSelectors": ["pm"]
+      }
+    },
+    {
+      "id": "mailgun",
+      "name": "Mailgun",
+      "category": "transactional",
+      "signals": {
+        "spfIncludes": ["mailgun.org"],
+        "dkimSelectors": ["mailo"]
+      }
+    },
+    {
+      "id": "amazon-ses",
+      "name": "Amazon SES",
+      "category": "transactional",
+      "signals": {
+        "spfIncludes": ["amazonses.com"]
+      }
+    },
+    {
+      "id": "resend",
+      "name": "Resend",
+      "category": "transactional",
+      "signals": {
+        "dkimSelectors": ["resend"]
+      }
+    },
+    {
+      "id": "sparkpost",
+      "name": "SparkPost",
+      "category": "transactional",
+      "signals": {
+        "spfIncludes": ["sparkpostmail.com"]
+      }
+    },
+    {
+      "id": "mandrill",
+      "name": "Mandrill",
+      "category": "transactional",
+      "signals": {
+        "spfIncludes": ["mandrillapp.com"],
+        "dkimSelectors": ["mandrill"]
+      }
+    },
+    {
+      "id": "socketlabs",
+      "name": "SocketLabs",
+      "category": "transactional",
+      "signals": {
+        "spfIncludes": ["socketlabs.com"]
+      }
+    },
+    {
+      "id": "mailchimp",
+      "name": "Mailchimp",
+      "category": "marketing",
+      "signals": {
+        "spfIncludes": ["servers.mcsv.net"],
+        "dkimSelectors": ["k1"]
+      }
+    },
+    {
+      "id": "hubspot",
+      "name": "HubSpot",
+      "category": "marketing",
+      "signals": {
+        "spfIncludes": ["hubspotemail.net"],
+        "dkimSelectors": ["hs1", "hs2", "sig1"],
+        "txtVerification": ["hubspot-developer-verification="]
+      }
+    },
+    {
+      "id": "constant-contact",
+      "name": "Constant Contact",
+      "category": "marketing",
+      "signals": {
+        "spfIncludes": ["constantcontact.com"]
+      }
+    },
+    {
+      "id": "brevo",
+      "name": "Brevo",
+      "category": "marketing",
+      "signals": {
+        "spfIncludes": ["sendinblue.com"]
+      }
+    },
+    {
+      "id": "campaign-monitor",
+      "name": "Campaign Monitor",
+      "category": "marketing",
+      "signals": {
+        "spfIncludes": ["cmail1.com"]
+      }
+    },
+    {
+      "id": "activecampaign",
+      "name": "ActiveCampaign",
+      "category": "marketing",
+      "signals": {
+        "spfIncludes": ["emsd1.com"]
+      }
+    },
+    {
+      "id": "convertkit",
+      "name": "ConvertKit",
+      "category": "marketing",
+      "signals": {
+        "spfIncludes": ["convertkit-mail.com"]
+      }
+    },
+    {
+      "id": "klaviyo",
+      "name": "Klaviyo",
+      "category": "marketing",
+      "signals": {
+        "spfIncludes": ["klaviyomail.com"]
+      }
+    },
+    {
+      "id": "salesforce-marketing",
+      "name": "Salesforce Marketing Cloud",
+      "category": "marketing",
+      "signals": {
+        "spfIncludes": ["exacttarget.com"],
+        "dkimSelectors": ["sm1", "sm2"]
+      }
+    },
+    {
+      "id": "mailerlite",
+      "name": "MailerLite",
+      "category": "marketing",
+      "signals": {
+        "spfIncludes": ["mlsend.com"]
+      }
+    },
+    {
+      "id": "barracuda",
+      "name": "Barracuda",
+      "category": "security",
+      "signals": {
+        "mxPatterns": ["barracudanetworks.com"]
+      }
+    },
+    {
+      "id": "mimecast",
+      "name": "Mimecast",
+      "category": "security",
+      "signals": {
+        "spfIncludes": ["mimecast.com"],
+        "mxPatterns": ["mimecast.com"]
+      }
+    },
+    {
+      "id": "proofpoint",
+      "name": "Proofpoint",
+      "category": "security",
+      "signals": {
+        "spfIncludes": ["pphosted.com"],
+        "mxPatterns": ["pphosted.com"]
+      }
+    },
+    {
+      "id": "google-verification",
+      "name": "Google Site Verification",
+      "category": "verification",
+      "signals": {
+        "txtVerification": ["google-site-verification="]
+      }
+    },
+    {
+      "id": "facebook-verification",
+      "name": "Facebook Domain Verification",
+      "category": "verification",
+      "signals": {
+        "txtVerification": ["facebook-domain-verification="]
+      }
+    },
+    {
+      "id": "microsoft-verification",
+      "name": "Microsoft Domain Verification",
+      "category": "verification",
+      "signals": {
+        "txtVerification": ["MS="]
+      }
+    },
+    {
+      "id": "adobe-verification",
+      "name": "Adobe Domain Verification",
+      "category": "verification",
+      "signals": {
+        "txtVerification": ["adobe-idp-site-verification="]
+      }
+    },
+    {
+      "id": "atlassian-verification",
+      "name": "Atlassian Domain Verification",
+      "category": "verification",
+      "signals": {
+        "txtVerification": ["atlassian-domain-verification="]
+      }
+    },
+    {
+      "id": "github-verification",
+      "name": "GitHub Domain Verification",
+      "category": "verification",
+      "signals": {
+        "txtVerification": ["_github-challenge-"]
+      }
+    },
+    {
+      "id": "salesforce-verification",
+      "name": "Salesforce Domain Verification",
+      "category": "verification",
+      "signals": {
+        "txtVerification": ["salesforce-"]
+      }
+    }
+  ]
+}
