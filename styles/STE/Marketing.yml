@@ -1,0 +1,11 @@
+extends: existence
+message: "Do not use marketing words. Describe what the tool does."
+level: error
+ignorecase: true
+tokens:
+  - seamless(?:ly)?
+  - blazing(?:ly)?
+  - revolutionary
+  - effortless(?:ly)?
+  - game.chang\w+
+  - cutting.edge

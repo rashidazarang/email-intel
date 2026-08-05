@@ -1,6 +1,6 @@
 # email-intel
 
-**Email infrastructure fingerprinting for Swift.** Given a domain, email-intel tells you who runs its mail (Google Workspace, Microsoft 365, SendGrid, Mailgun, Klaviyo, …), how strict its anti-spoofing posture is (SPF, DKIM, DMARC, STARTTLS — scored to a letter grade), and what its raw headers reveal about the path a message took to your inbox.
+**Email infrastructure fingerprinting for Swift.** Give email-intel a domain. It tells you who runs the domain's mail (Google Workspace, Microsoft 365, SendGrid, Mailgun, Klaviyo, and 30 more). It scores the anti-spoofing posture (SPF, DKIM, DMARC, STARTTLS) to a letter grade. It also parses raw headers and shows the path a message took to your inbox.
 
 From the team behind [warming.email](https://warming.email).
 
@@ -9,15 +9,15 @@ From the team behind [warming.email](https://warming.email).
 ![macOS 13+](https://img.shields.io/badge/macOS-13%2B-blue)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
 
-Built on Swift 6 strict concurrency. **Zero external dependencies** — DNS-over-HTTPS via `URLSession`, SMTP via `Network.framework`, JSON via `Foundation`. 116 tests; the whole tree builds with `-warnings-as-errors`.
+The package uses Swift 6 strict concurrency and has **zero external dependencies**. DNS runs over HTTPS through `URLSession`. SMTP runs through `Network.framework`. JSON comes from `Foundation`. The suite has 116 tests. The full tree builds with `-warnings-as-errors`.
 
 ## Three ways in
 
 | Product | Type | Use it from |
 |---|---|---|
 | `EmailIntel` | Swift library | Any Swift 6 / macOS 13+ project (SwiftPM) |
-| `email-intel-cli` | CLI | Your terminal, or subprocess it from any language (JSON on stdout) |
-| `EmailIntelMCP` | MCP server | Any MCP client (Claude Code, Claude Desktop, Cursor, …) over stdio |
+| `email-intel-cli` | CLI | Your terminal, or a subprocess from any language (JSON on stdout) |
+| `EmailIntelMCP` | MCP server | Any MCP client (Claude Code, Claude Desktop, Cursor) over stdio |
 
 ## Quick start (CLI)
 
@@ -51,7 +51,7 @@ Analyze raw headers offline:
 
 ## MCP server
 
-Point any MCP client at the binary — no key, no config beyond the path:
+Point any MCP client at the binary. There is no key and no configuration beyond the path:
 
 ```json
 {
@@ -65,10 +65,10 @@ Point any MCP client at the binary — no key, no config beyond the path:
 
 | Tool | Input | Output |
 |---|---|---|
-| `email_intel` | `{ "domain": "example.com" }` | Full `EmailIntelligence` — providers, security score, DNS profile, summary |
-| `dns_lookup` | `{ "domain": "example.com" }` | `DNSProfile` — MX, SPF, DKIM presence, DMARC, TXT records |
-| `smtp_probe` | `{ "host": "mail.example.com", "port": 25 }` | `SMTPProfile` — banner, EHLO extensions, STARTTLS support |
-| `email_headers` | `{ "raw_headers": "Received: ..." }` | `EmailHeaderAnalysis` — Received chain, auth results, ARC sets, originating IP |
+| `email_intel` | `{ "domain": "example.com" }` | Full `EmailIntelligence`: providers, security score, DNS profile, summary |
+| `dns_lookup` | `{ "domain": "example.com" }` | `DNSProfile`: MX, SPF, DKIM presence, DMARC, TXT records |
+| `smtp_probe` | `{ "host": "mail.example.com", "port": 25 }` | `SMTPProfile`: banner, EHLO extensions, STARTTLS support |
+| `email_headers` | `{ "raw_headers": "Received: ..." }` | `EmailHeaderAnalysis`: Received chain, auth results, ARC sets, originating IP |
 
 ## Swift library
 
@@ -89,7 +89,7 @@ print(intel.summary.mailboxProviders)      // ["Google Workspace"]
 print(intel.summary.transactionalServices) // ["SendGrid", "Mandrill"]
 ```
 
-Or just analyze headers, fully offline:
+You can also analyze headers offline, with no network access:
 
 ```swift
 let analysis = await engine.analyzeHeaders(rawHeaders: rawMessage)
@@ -97,7 +97,7 @@ print(analysis.receivedChain.count)
 print(analysis.authenticationResults.first?.results)
 ```
 
-## What's inside
+## What is inside
 
 ```
 Sources/EmailIntel/
@@ -106,7 +106,7 @@ Sources/EmailIntel/
 ├── Fingerprints/   # 36-service signature database (SPF includes, DKIM selectors,
 │                   # MX patterns, TXT verification tokens)
 ├── DNS/            # DoH resolver (Cloudflare JSON API), MX/SPF/DMARC/DKIM/BIMI parsers
-├── SMTP/           # NWConnection-based prober — banner, EHLO, STARTTLS detection
+├── SMTP/           # NWConnection-based prober: banner, EHLO, STARTTLS detection
 ├── Headers/        # RFC 5322 folding, RFC 7601 Authentication-Results, RFC 8617 ARC
 ├── Classification/ # webmail / disposable / provider classification
 └── Engine/         # SecurityScorer (4-dimension rubric → A+/A/B/C/D/F),
@@ -118,33 +118,33 @@ Sources/EmailIntelCLI/   # thin CLI over the same engine, JSON on stdout
 
 ### Security scoring rubric
 
-100 points across four dimensions, mapped to a letter grade:
+The scorer assigns 100 points across four dimensions, then maps the total to a letter grade:
 
 | Dimension | 25 pts | 20 pts | 10 pts | 5 pts | 0 pts |
 |---|---|---|---|---|---|
 | **SPF** | `-all` (hardfail) | `~all` (softfail) | `?all` (neutral) | `+all` (critical) | missing |
-| **DKIM** | present | — | — | — | missing |
-| **DMARC** | `p=reject` | `p=quarantine` | `p=none` | — | missing |
-| **TLS** | STARTTLS supported | — | — | — | not supported (15 if unprobed) |
+| **DKIM** | present | - | - | - | missing |
+| **DMARC** | `p=reject` | `p=quarantine` | `p=none` | - | missing |
+| **TLS** | STARTTLS supported | - | - | - | not supported (15 if unprobed) |
 
 Grade boundaries: **A+** ≥95, **A** 85–94, **B** 70–84, **C** 55–69, **D** 40–54, **F** <40.
 Posture: A+/A → `strict`, B → `moderate`, C/D/F → `minimal`.
 
-> A note on grades: DKIM is only detectable when a domain publishes selectors this tool can
-> discover, so a domain can grade lower here than its true posture. The grade measures what an
-> outside observer can verify — which is exactly what receiving mail servers see.
+> A note on grades. DKIM detection needs selectors that this tool can discover. A domain can
+> grade lower here than its true posture. The grade measures what an outside observer can
+> verify. Receiving mail servers see the same thing.
 
 ## Conventions
 
-- **macOS 13+** minimum, **Swift 6** strict concurrency (`Sendable` everywhere, actors for stateful resolvers/probers)
-- **No force unwraps** and no `as!` in `Sources/**`
-- **Zero external SPM dependencies**
-- `os.Logger` for logging — no `print()` outside the CLI's output path
-- `swift build -Xswiftc -warnings-as-errors && swift test` is the bar for every change
+- macOS 13+ minimum. Swift 6 strict concurrency: `Sendable` everywhere, actors for stateful resolvers and probers.
+- No force unwraps and no `as!` in `Sources/**`.
+- Zero external SPM dependencies.
+- `os.Logger` for logging. No `print()` outside the CLI's output path.
+- The bar for every change: `swift build -Xswiftc -warnings-as-errors && swift test`.
 
 ## Why this exists
 
-Deliverability work starts with a question most senders never ask: *what does my domain look like from the outside?* email-intel answers it — for your own domain before a campaign, or for a prospect's domain before you write to them. If your domain grades below A, [warming.email](https://warming.email) gets it ready to send.
+Deliverability work starts with a question that most senders never ask: what does my domain look like from the outside? email-intel answers it. Check your own domain before a campaign. Check a prospect's domain before you write to them. If your domain grades below A, [warming.email](https://warming.email) gets it ready to send.
 
 ## License
 

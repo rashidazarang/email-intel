@@ -1,3 +1,4 @@
+import EmailIntel
 import Foundation
 import os
 
@@ -56,7 +57,7 @@ actor MCPServer {
         [
             "protocolVersion": "2024-11-05",
             "capabilities": ["tools": [String: Any]()] as [String: Any],
-            "serverInfo": ["name": "email-intel-mcp", "version": "0.1.0"] as [String: Any]
+            "serverInfo": ["name": "email-intel-mcp", "version": EmailIntel.version] as [String: Any]
         ]
     }
 

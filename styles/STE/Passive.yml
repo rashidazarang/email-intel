@@ -1,0 +1,6 @@
+extends: existence
+message: "Prefer the active voice: name the actor."
+level: warning
+ignorecase: true
+raw:
+  - '\b(is|are|was|were|be|been|being)\s+(\w+ed|built|done|found|given|held|kept|known|made|read|run|sent|set|shown|taken|used|written)\b'

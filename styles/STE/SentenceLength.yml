@@ -1,0 +1,7 @@
+extends: occurrence
+message: "Split this sentence. The standard is 25 words or fewer."
+level: warning
+scope: sentence
+ignorecase: false
+max: 25
+token: '\b(\w+)\b'
