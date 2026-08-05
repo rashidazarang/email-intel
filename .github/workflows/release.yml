@@ -95,14 +95,15 @@ jobs:
       - name: Publish (dry run)
         if: github.event_name == 'workflow_dispatch' && inputs.dry_run
         run: |
-          set -uo pipefail
-          npm publish email-intel-mcp-*.tgz --dry-run 2>&1 | tee publish-dry.log
-          status=${PIPESTATUS[0]}
-          if [ "$status" -ne 0 ]; then
+          # The runner shell uses -e. Keep the pipeline inside the if so a
+          # publish rejection does not end the script before the check runs.
+          if npm publish email-intel-mcp-*.tgz --dry-run 2>&1 | tee publish-dry.log; then
+            echo "Dry run OK."
+          else
             # The registry rejects a version that already exists, even in a
             # dry run. That rejection proves auth and registry contact, which
             # is what this mode validates between releases.
-            grep -q "previously published" publish-dry.log || exit "$status"
+            grep -q "previously published" publish-dry.log || exit 1
             echo "Dry run OK: the current version is already on the registry."
           fi
       - name: Publish with provenance
