@@ -1,0 +1,112 @@
+# Release: publish email-intel-mcp to npm with provenance, and attach the
+# tarball to the GitHub release.
+#
+# Lineage:
+# - qm release.yml: resolve the version from the package, refuse a republish.
+# - crawlio-browser ci.yml: a version gate blocks a release with stale versions.
+# - This repo: scripts/check-versions.sh is the single gate over four sources.
+#
+# Auth has two paths. The primary path is npm Trusted Publishing (OIDC): no
+# secret, automatic provenance. Configure it once at npmjs.com under the
+# package settings (repository rashidazarang/email-intel, workflow
+# release.yml). The bridge path is the NPM_TOKEN repository secret. The
+# workflow uses the token when the secret exists. Remove the secret after
+# you configure the trusted publisher.
+
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Pack and validate. Do not publish."
+        type: boolean
+        default: true
+
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+      - name: Version gate (four sources)
+        run: ./scripts/check-versions.sh
+      - name: Tag matches the package version
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          set -euo pipefail
+          tag_version="${GITHUB_REF_NAME#v}"
+          pkg_version=$(grep -m1 '"version"' npm/package.json | grep -o '[0-9.]*')
+          if [ "$tag_version" != "$pkg_version" ]; then
+            echo "::error::Tag is v$tag_version but npm/package.json says $pkg_version." >&2
+            exit 1
+          fi
+      - name: Build (warnings as errors)
+        run: swift build -Xswiftc -warnings-as-errors
+      - name: Test
+        run: swift test
+      - name: Assemble the npm package
+        run: ./scripts/build-npm.sh
+      - name: Pack
+        run: cd npm && npm pack
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: npm-package
+          path: npm/email-intel-mcp-*.tgz
+          if-no-files-found: error
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write   # OIDC for npm provenance
+      contents: write   # create the GitHub release, upload the asset
+    env:
+      HAS_NPM_TOKEN: ${{ secrets.NPM_TOKEN != '' }}
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: npm-package
+      - name: Update npm (trusted publishing needs a recent CLI)
+        run: |
+          npm install -g npm@latest
+          npm --version
+      - name: Configure token auth (bridge path)
+        if: env.HAS_NPM_TOKEN == 'true'
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+          npm whoami
+      - name: Refuse a republish
+        if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.dry_run) }}
+        run: |
+          set -euo pipefail
+          tarball=$(ls email-intel-mcp-*.tgz)
+          version=$(echo "$tarball" | sed 's/email-intel-mcp-\(.*\)\.tgz/\1/')
+          if npm view "email-intel-mcp@$version" version >/dev/null 2>&1; then
+            echo "::error::email-intel-mcp@$version is already on the registry. Bump the version." >&2
+            exit 1
+          fi
+      - name: Publish (dry run)
+        if: github.event_name == 'workflow_dispatch' && inputs.dry_run
+        run: npm publish email-intel-mcp-*.tgz --dry-run
+      - name: Publish with provenance
+        if: startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && !inputs.dry_run)
+        run: npm publish email-intel-mcp-*.tgz --provenance
+      - name: Attach the tarball to the GitHub release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          tag="$GITHUB_REF_NAME"
+          if ! gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release create "$tag" --repo "$GITHUB_REPOSITORY" --title "$tag" \
+              --notes "See the CHANGELOG for this version."
+          fi
+          gh release upload "$tag" email-intel-mcp-*.tgz --repo "$GITHUB_REPOSITORY" --clobber

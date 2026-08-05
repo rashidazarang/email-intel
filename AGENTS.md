@@ -43,9 +43,10 @@ Tables, code blocks, JSON examples, and CHANGELOG history are exempt.
 
 `EmailIntel.version` in `Sources/EmailIntel/EmailIntel.swift` is the only version constant. The CLI and the MCP server read it. When shipped behavior changes:
 
-1. Bump `EmailIntel.version`.
+1. Bump `EmailIntel.version` and the version in `npm/package.json`.
 2. Add a CHANGELOG entry with the same version and today's date.
-3. Tag the release as `v<version>` after merge.
+3. Tag the release as `v<version>` after merge and push the tag.
+4. The Release workflow builds, tests, publishes to npm with provenance, and attaches the tarball to the GitHub release. Do not publish by hand.
 
 `scripts/check-versions.sh` fails when these disagree. CI runs it.
 
